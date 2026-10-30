@@ -1,0 +1,22 @@
+services:
+  db:
+    image: postgres:latest
+    container_name: subledger_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-subLedgerdb}
+      POSTGRES_USER: ${POSTGRES_USER:-subLedger}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-subLedger}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+
+volumes:
+  postgres_data:
